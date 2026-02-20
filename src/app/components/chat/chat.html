@@ -47,14 +47,14 @@
             @for(mensaje of mensajes; track trackByMensaje($index, mensaje)){
                 <div
                     class="message-wrapper"
-                    [class.user-message]="mensaje.tipo =='usuario'"
-                    [class.assistant-message]="mensaje.tipo=='asistente'" 
+                    [class.user-message]="mensaje.tipo =='Usuario'"
+                    [class.assistant-message]="mensaje.tipo=='Asistente'" 
                     >
 
                     <!--Validar si el mensaje es del Usuario-->
 
                     @if(mensaje.tipo === 'Usuario'){
-                        <div class="user message-msg">
+                        <div class="user-msg message">
                             <div class="message-content">
                                 <p>{{mensaje.contenido}}</p>
                             </div>
@@ -66,17 +66,17 @@
                     
                     <!--Validar si el mensaje es del Asistente-->
                     @if(mensaje.tipo === 'Asistente'){
-                        <div class="mesagge assistant-msg">
+                        <div class="assistant-msg">
                             <div class="message-avatar">
                                 👽
                             </div>
-                            <div class="message bubble">
+                            <div class="message-bubble">
                                 <div class="message-content">
                                     <p [innerHTML]="formatearMensajeAsistente(mensaje.contenido)"></p>
                                 </div>
                                 <div class="message-time">
                                     {{mensaje.fechaEnvio}}
-                                    @if(mensaje.enviado === 'Error'){
+                                    @if(mensaje.estado === 'Error'){
                                         <span class="error-indicator">⚠</span>
                                     }
                                 </div>
@@ -84,7 +84,63 @@
                         </div>
                     }
                 </div>
+                
+            }
+
+            <!--Si el asistente está escribiendo-->
+            @if(asistenteEscribiendo){
+                <div class="message-wrapped assistant-message">
+                    <div class="message assistant-msg typing">
+                        <div class="message-avatar">
+                            👽
+                        </div>
+                        <div class="message-bubble">
+                            <div class="typing-indicator">
+                                <div class="typing-dots">
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+                                </div>
+                                <p class="typing-text">Él asistente está escribiendo...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             }
         </div>
     </main>
+
+    <footer class="chat-input">
+        <form class="input-form"
+        (ngSubmit)="enviarMensaje()"
+        #chatForm = "ngForm"
+        >
+        <div class="input-wrapper">
+            <textarea 
+            name="mensaje"
+            #mensajeInput
+            [(ngModel)]="mensajeTexto"
+            placeholder="Escribe tu mensaje aquí (Presiona Enter para enviar o Shift + Enter para salto de línea)"
+            class="message-input"
+            [disabled]="enviandoMensaje || asistenteEscribiendo"
+            rows="1"
+            ></textarea>
+        </div>
+        <button
+        type="submit"
+        class="send-btn"
+        [disabled]="mensajeTexto.trim() || enviandoMensaje || asistenteEscribiendo "
+        [class.sending]="enviandoMensaje"
+        >
+        @if(enviandoMensaje){
+            <span></span>
+        }
+        @if(!enviandoMensaje){
+            <span class="sending-spinner"></span>
+        }
+        </button>
+        </form>
+        
+    </footer>
+
 </div>
