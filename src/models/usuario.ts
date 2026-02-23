@@ -1,8 +1,8 @@
 export interface Usuario{
     uid: string,
-    nombre: String,
+    nombre?: String,
     email: String,
-    fotoUrl: String,
-    fechaCreacion: String,
-    ultimaConexion: String,
+    fotoUrl?: String,
+    fechaCreacion: Date,
+    ultimaConexion: Date,
 }

@@ -1,8 +1,55 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { Usuario } from '../../models/usuario';
+import { map } from 'rxjs';
+import { GoogleAuthProvider } from 'firebase/auth';
+import { signInWithPopup, signOut, } from 'firebase/auth';
+import {Auth, User , user} from '@angular/fire/auth'
 
 @Injectable({
   providedIn: "root"
 })
 export class AuthService {
+  private auth = inject(Auth)
 
+  //variable de tipo observable
+  usuario$ = user(this.auth)
+
+  //variable observarbe que devuelve true o false si el usuario esta autenticado
+  estaAutenticado$ = this.usuario$.pipe(
+    map(usuario => !!usuario)
+  )
+
+  //función asíncrona que permite el inicio de sesión
+  async iniciarSesion(): Promise<Usuario | null>{
+    try{
+      const provedoor = new GoogleAuthProvider
+
+      //Controladores
+      provedoor.addScope('email')
+      provedoor.addScope('profile')
+
+      const resultado = await signInWithPopup(this.auth, provedoor);
+      const usuarioFirebase = resultado.user;
+      if(usuarioFirebase){
+        const usuario : Usuario ={
+          uid: usuarioFirebase.uid,
+          nombre: usuarioFirebase.displayName || "Usuario sin nombre",
+          email: usuarioFirebase.email || '',
+          fotoUrl: usuarioFirebase.photoURL || undefined,
+          fechaCreacion: new Date,
+          ultimaConexion: new Date,
+        }
+        return usuario;
+      }
+      return null;
+    }catch(error){
+      console.error('❌❌Error en la autenticación')
+      throw error
+    }
+  }
+
+  obtenerUsuario(): User | null{
+    return this.auth.currentUser
+  }
+  // CerrarSesion
 }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, ElementRef, contentChild } from '@angular/core';
 import { MensajeChat } from '../../../models/chat';
 import { FormsModule } from '@angular/forms';  
 
@@ -20,11 +20,47 @@ export class Chat {
   asistenteEnviando = false
   mensajeTexto=""
   enviandoMensaje=""
+  mensajeError = "No se envio su mensaje";
+  private debeHacerScroll = true;
   cerrarSesion(){}
+
+  // Referenciar los contenedores
+  @ViewChild('messagesContainer') messagesContainer! : ElementRef
+  
+  private scrollHaciaAbajo():void{
+    try{
+      const container = this.messagesContainer?.nativeElement
+      if(container){
+        container.scrollTop = container.scrollHeight
+      }
+    }catch(error){
+      console.error('❌Error al hacer scroll')
+    }
+  }
+
+  ngAfterViewChecked():void{
+    if(this.debeHacerScroll){
+      this.scrollHaciaAbajo();
+      this.debeHacerScroll=false
+    }
+  }
 
   trackByMensaje(index: number, mensaje: MensajeChat){}
 
-  formatearMensajeAsistente(mensaje:string){}
+  formatearMensajeAsistente(contenido: string){
+    return contenido
+      .replace(/\n/g, '<br>')
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')
+  }
+
+
+  formatearHora(fecha: Date): String{
+    return fecha.toLocaleDateString('es-ES',{
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
 
   enviarMensaje(){}
 
@@ -75,6 +111,34 @@ export class Chat {
     },{
       id:'id2',
       contenido:'🍕🍕🍕🍕',
+      tipo: 'Asistente',
+      fechaEnvio: new Date(ahora.getTime()),
+      estado: 'Enviado',
+      usuarioId: 'a1'
+    },{
+      id:'id1',
+      contenido:'Ahora enviame unos hot',
+      tipo: 'Usuario',
+      fechaEnvio: new Date(ahora.getTime()),
+      estado: 'Enviado',
+      usuarioId: 'u1'
+    },{
+      id:'id2',
+      contenido:'🥵🥵🥵🥵',
+      tipo: 'Asistente',
+      fechaEnvio: new Date(ahora.getTime()),
+      estado: 'Enviado',
+      usuarioId: 'a1'
+    },{
+      id:'id1',
+      contenido:'Epa ChaJePeTe eres el mejor',
+      tipo: 'Usuario',
+      fechaEnvio: new Date(ahora.getTime()),
+      estado: 'Enviado',
+      usuarioId: 'u1'
+    },{
+      id:'id2',
+      contenido:'Claro! si necesitas de algo más puedes pedirmelo👉👈',
       tipo: 'Asistente',
       fechaEnvio: new Date(ahora.getTime()),
       estado: 'Enviado',

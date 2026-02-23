@@ -19,7 +19,7 @@
             </div>
     </header>
 
-    <main class="chat-messages">
+    <main class="chat-messages" #messagesContainer>
         <!--Validacion en caso de que no haya mensajes-->
         @if(mensajes.length === 0 && !cargandoHistorial){
             <div class="welcome-message">
@@ -31,6 +31,7 @@
                     para obtener mejores resultados</p>
                 </div>
             </div>
+            
         }
 
         <!--En caso de que si haya mensajes-->
@@ -59,7 +60,7 @@
                                 <p>{{mensaje.contenido}}</p>
                             </div>
                             <div class="message-time">
-                                <p>{{mensaje.fechaEnvio}}</p>
+                                {{formatearHora(mensaje.fechaEnvio)}}
                             </div>
                         </div>
                     }
@@ -75,7 +76,7 @@
                                     <p [innerHTML]="formatearMensajeAsistente(mensaje.contenido)"></p>
                                 </div>
                                 <div class="message-time">
-                                    {{mensaje.fechaEnvio}}
+                                    {{formatearHora(mensaje.fechaEnvio)}}
                                     @if(mensaje.estado === 'Error'){
                                         <span class="error-indicator">⚠</span>
                                     }
