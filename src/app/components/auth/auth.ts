@@ -24,13 +24,17 @@ export class Auth {
     this.mensajeError = ""
 
     try {
+      //Implementación del servicio
+      console.log('Llamo a la función')
+      const usuario = await this.AuthService.iniciarSesion()
       //Falta implementar el servicio
 
       //Vamos a simular un usuario ya creado
-      let usuario = null
+      /*let usuario = null
       usuario = await new Promise ((resolve) =>{
         setTimeout(()=>resolve({nombre: 'usuario de prueba'}), 1000)
-      })
+      })*/
+
       if(usuario) {
         await this.router.navigate(['/chat'])
       } else {
@@ -52,8 +56,12 @@ export class Auth {
     }
   }
 
-  /* verificar que si el usuario ya esta autenticado se redirecciona al chat de una vez*/
-  /*ngOnInit(){
-    this.router.navigate(['/chat'])
-  }*/
+  // verificar que si el usuario ya esta autenticado se redirecciona al chat de una vez*/
+  ngOnInit(): void{
+    this.AuthService.estaAutenticado$.subscribe( autenticado =>{
+      if(autenticado){
+        this.router.navigate(['/chat'])
+      }
+    });
+  }
 }

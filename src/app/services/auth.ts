@@ -22,14 +22,18 @@ export class AuthService {
   //función asíncrona que permite el inicio de sesión
   async iniciarSesion(): Promise<Usuario | null>{
     try{
+      console.log('Inicio el servicio función iniciar sesión')
       const provedoor = new GoogleAuthProvider
 
       //Controladores
       provedoor.addScope('email')
       provedoor.addScope('profile')
 
+      console.log('antes')
       const resultado = await signInWithPopup(this.auth, provedoor);
+      console.log('después')
       const usuarioFirebase = resultado.user;
+
       if(usuarioFirebase){
         const usuario : Usuario ={
           uid: usuarioFirebase.uid,
@@ -51,5 +55,8 @@ export class AuthService {
   obtenerUsuario(): User | null{
     return this.auth.currentUser
   }
+
   // CerrarSesion
+
+
 }
