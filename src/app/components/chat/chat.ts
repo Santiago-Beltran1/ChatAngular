@@ -1,6 +1,11 @@
-import { Component, ViewChild, ElementRef, contentChild } from '@angular/core';
+import { Component, ViewChild, ElementRef, contentChild, inject } from '@angular/core';
 import { MensajeChat } from '../../../models/chat';
 import { FormsModule } from '@angular/forms';  
+import { AuthService } from '../../services/auth';
+import { ChatService } from '../../services/chat';
+import { Router } from '@angular/router';
+import { User } from 'firebase/auth';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-chat',
@@ -9,23 +14,53 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './chat.css',
 })
 export class Chat {
-  nombre:string="Santiago Beltran"
-  email:string="santiago@gmail.com"
+  private authService = inject(AuthService)
+  private chatService = inject(ChatService)
+  private router = inject(Router)
+
+  // Referenciar los contenedores
+  @ViewChild('messagesContainer') messagesContainer! : ElementRef
+
+  usuario: User | null = null;
+
   manejoErrorImagen(){
     console.log('Error al cargar la imagen del usuario');
   }
   mensajes: MensajeChat[] = []
   cargandoHistorial = false
-  asistenteEscribiendo = true
+  asistenteEscribiendo = false
   asistenteEnviando = false
   mensajeTexto=""
-  enviandoMensaje=""
-  mensajeError = "No se envio su mensaje";
+  enviandoMensaje= false
+  mensajeError = "";
+  private suscripciones : Subscription[] = []
+
+  private async verificarAutenticacion(): Promise<void>{
+    // A la variable usuario le voy a asignar el servicio de auth y la función de obtener usuario
+    this.usuario = this.authService.obtenerUsuario()
+    if(!this.usuario){
+      await this.router.navigate(['/auth'])
+      throw new Error('usuario no autenticado')
+    }
+  }
+
+  private async inicializarChat(): Promise<void>{
+    if(!this.usuario){
+      return;
+    }
+
+    this.cargandoHistorial = true;
+    try{
+      await this.chatService.InicializarChat(this.usuario.uid)
+    }catch(error){
+      console.error('No se ha podido inicializar el historial del chat')
+    }
+  }
+
   private debeHacerScroll = true;
   cerrarSesion(){}
 
-  // Referenciar los contenedores
-  @ViewChild('messagesContainer') messagesContainer! : ElementRef
+
   
   private scrollHaciaAbajo():void{
     try{
@@ -65,87 +100,7 @@ export class Chat {
   enviarMensaje(){}
 
   ngOnInit(){
-    this.mensajes = this.generarMensajeDemo();
-  }
 
-  private generarMensajeDemo():MensajeChat[]{
-  const ahora =new Date();
-
-  return [
-    {
-      id:'id1',
-      contenido:'Hola eres el asistente?',
-      tipo: 'Usuario',
-      fechaEnvio: new Date(ahora.getTime()),
-      estado: 'Enviado',
-      usuarioId: 'u1'
-    },{
-      id:'id2',
-      contenido:'Hola soy tu asistente',
-      tipo: 'Asistente',
-      fechaEnvio: new Date(ahora.getTime()),
-      estado: 'Enviado',
-      usuarioId: 'a1'
-    },
-    {
-      id:'id1',
-      contenido:'Me puedes ayudar con mi problema?',
-      tipo: 'Usuario',
-      fechaEnvio: new Date(ahora.getTime()),
-      estado: 'Enviado',
-      usuarioId: 'u1'
-    },{
-      id:'id2',
-      contenido:'Claro dime lo qué te sucede',
-      tipo: 'Asistente',
-      fechaEnvio: new Date(ahora.getTime()),
-      estado: 'Enviado',
-      usuarioId: 'a1'
-    },{
-      id:'id1',
-      contenido:'Mandame emojis de pizza',
-      tipo: 'Usuario',
-      fechaEnvio: new Date(ahora.getTime()),
-      estado: 'Enviado',
-      usuarioId: 'u1'
-    },{
-      id:'id2',
-      contenido:'🍕🍕🍕🍕',
-      tipo: 'Asistente',
-      fechaEnvio: new Date(ahora.getTime()),
-      estado: 'Enviado',
-      usuarioId: 'a1'
-    },{
-      id:'id1',
-      contenido:'Ahora enviame unos hot',
-      tipo: 'Usuario',
-      fechaEnvio: new Date(ahora.getTime()),
-      estado: 'Enviado',
-      usuarioId: 'u1'
-    },{
-      id:'id2',
-      contenido:'🥵🥵🥵🥵',
-      tipo: 'Asistente',
-      fechaEnvio: new Date(ahora.getTime()),
-      estado: 'Enviado',
-      usuarioId: 'a1'
-    },{
-      id:'id1',
-      contenido:'Epa ChaJePeTe eres el mejor',
-      tipo: 'Usuario',
-      fechaEnvio: new Date(ahora.getTime()),
-      estado: 'Enviado',
-      usuarioId: 'u1'
-    },{
-      id:'id2',
-      contenido:'Claro! si necesitas de algo más puedes pedirmelo👉👈',
-      tipo: 'Asistente',
-      fechaEnvio: new Date(ahora.getTime()),
-      estado: 'Enviado',
-      usuarioId: 'a1'
-    }
-  ]
   }
 }
-
-
+  

@@ -1,5 +1,5 @@
 export interface MensajeChat{
-    id: string,
+    id?: string,
     contenido:  string,
     usuarioId: string,
     fechaEnvio: Date,
