@@ -17,7 +17,7 @@ const GeminiServiceMock = {
 export class ChatService {
   private authService = inject(AuthService)
 
-  private FirebaseService = inject(FirebaseService)
+  private firebaseService = inject(FirebaseService)
 
   private mensajeSubject = new BehaviorSubject<MensajeChat[]>([]);
 
@@ -27,7 +27,7 @@ export class ChatService {
 
   private AsistenteRespondiendo = new BehaviorSubject<boolean>(false);
 
-  private AsistenteRespondiendo$ = this.AsistenteRespondiendo.asObservable();
+  public AsistenteRespondiendo$ = this.AsistenteRespondiendo.asObservable();
 
   async InicializarChat(usuarioId: string): Promise<void>{
     if(!this.CargandoHistorial){
@@ -36,7 +36,7 @@ export class ChatService {
 
     this.CargandoHistorial = true;
     try {
-      this.FirebaseService.obtenerMensajesUsuario(usuarioId).subscribe({
+      this.firebaseService.obtenerMensajesUsuario(usuarioId).subscribe({
         next: (mensajes)=>{
           // Actualizando BehaviorSubject
           this.mensajeSubject.next(mensajes)
@@ -81,7 +81,7 @@ export class ChatService {
       this.mensajeSubject.next(nuevoMensajeEncontrado)
       
       try{
-        await this.FirebaseService.guardarMensaje(mensajeUsuario);
+        await this.firebaseService.guardarMensaje(mensajeUsuario);
       }catch(firestoreError){
         console.error('No se pudo guardar el mensaje del usuario', firestoreError)
 
@@ -116,7 +116,7 @@ export class ChatService {
       this.mensajeSubject.next(nuevoMensajeEncontradoAsis);
 
       try{
-        await this.FirebaseService.guardarMensaje(mensajeAsistente)
+        await this.firebaseService.guardarMensaje(mensajeAsistente)
       }catch(firestoreError){
         console.error('Error al guardar el mensaje del asistente')
       }
@@ -134,7 +134,7 @@ export class ChatService {
       };
 
       try{
-        await this.FirebaseService.guardarMensaje(mensajeError);
+        await this.firebaseService.guardarMensaje(mensajeError);
       } catch(saveError) {
         console.error('Error al guardar el mensaje de error', saveError);
         const mensajesActual = this.mensajeSubject.value;
@@ -152,4 +152,4 @@ export class ChatService {
   obtenerMensajes(): MensajeChat[]{
     return this.mensajeSubject.value
   }
-} // Él de mi derecha es RE GAY ->>>>>>>>>>>>>>>>>>>
+} 

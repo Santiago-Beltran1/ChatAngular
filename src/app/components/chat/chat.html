@@ -2,13 +2,15 @@
 <div class="chat-container">
     <header class="chat-header">
         <div class="user-info">
-            <img src="https://i.redd.it/hmht9vfu2rhg1.jpeg" 
+            <img src="{{usuario?.photoURL}}" 
             alt="Imagen del usuario"
             class="user-avatar"
-            (error)="manejoErrorImagen()">
+            (error)="manejoErrorImagen($event)"
+            >
+
             <div class="user-details">
-                <h2 class="user-name">{{nombre}}</h2>
-                <p class="user-email">{{email}}</p>
+                <h2 class="user-name">{{usuario?.displayName}}</h2>
+                <p class="user-email">{{usuario?.email}}</p>
             </div>
         </div>
         <div class="header-actions">
@@ -123,6 +125,7 @@
             [(ngModel)]="mensajeTexto"
             placeholder="Escribe tu mensaje aquí (Presiona Enter para enviar o Shift + Enter para salto de línea)"
             class="message-input"
+            (keydown)="manejarTeclaPresionada($event)"
             [disabled]="enviandoMensaje || asistenteEscribiendo"
             rows="1"
             ></textarea>

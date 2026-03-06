@@ -57,6 +57,14 @@ export class AuthService {
   }
 
   // CerrarSesion
+  async cerrarSesion():Promise<void>{
+    try{
+      await signOut(this.auth)
+    } catch (error) {
+      console.error('Error cerrando sesión', error)
+      throw  error;
+    }
+  }
 
 
 }
