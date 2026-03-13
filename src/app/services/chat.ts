@@ -30,7 +30,7 @@ export class ChatService {
   public AsistenteRespondiendo$ = this.AsistenteRespondiendo.asObservable();
 
   async InicializarChat(usuarioId: string): Promise<void>{
-    if(!this.CargandoHistorial){
+    if(this.CargandoHistorial){
       return;
     }
 
