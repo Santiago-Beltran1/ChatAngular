@@ -10,7 +10,7 @@ export const environment = {
     measurementId: "G-W5LN2DY1TH"
   },
     gemini:{
-    apiURL:"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
+    apiURL:"https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent",
     apikey:"AIzaSyDcoyDADczUJtRPdIwvh1xfbPoiJ9AIwEE",
   }
 };
