@@ -8,7 +8,7 @@ interface PeticionGemini{
  contents: contentGemini[]; // Vamos a cambiar por otra interfaz 
  generationConfig?: {
   maxOutputTokens?: Number;
-  temperatura?: Number;
+  temperature?: Number;
  } 
  safetySettings?: safetySettings[]; // Vamos a cambiar por otra interfaz
 }
@@ -28,7 +28,7 @@ interface safetySettings{
 }
 
 interface RespuestaGemini{
-  candidate:{
+  candidates:{
     content:{
       parts:{
         text:string;
@@ -113,7 +113,7 @@ export class GeminiService {
       contents: contenido,
       generationConfig:{
         maxOutputTokens:800,
-        temperatura:0.7
+        temperature:0.7
       },
       safetySettings: configuracionesSeguridad
     };
@@ -126,8 +126,8 @@ export class GeminiService {
     .pipe(
       map( respuesta => {
         // Vamos a revisar que la respuesta tenga un formato correcto
-        if(respuesta.candidate && respuesta.candidate.length>0){
-          const candidate = respuesta.candidate[0];
+        if(respuesta.candidates && respuesta.candidates.length>0){
+          const candidate = respuesta.candidates[0];
           if(candidate.content.parts && candidate.content.parts.length>0){
             let contenidoRespuesta = candidate.content.parts[0].text;
 
@@ -166,7 +166,7 @@ export class GeminiService {
   convertirHistorialGemini(mensaje: any[]): contentGemini[]{
     const historialConvertido: contentGemini[] = mensaje.map(msg => (
       {
-      role: (msg.tipo === 'Usuario' ? 'User' : 'model') as 'User' | 'model',
+      role: (msg.tipo === 'Usuario' ? 'user' : 'model') as 'User' | 'model',
       parts: [{text:msg.contenido}]
       }
     ));
