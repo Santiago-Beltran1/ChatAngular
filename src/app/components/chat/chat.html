@@ -2,11 +2,11 @@
 <div class="chat-container">
     <header class="chat-header">
         <div class="user-info">
-            <img s
-            
-            alt="Imagen del usuario"
-            class="user-avatar"
-            (error)="manejoErrorImagen($event)"
+            <img 
+                [src]="usuario?.photoURL"
+                alt="Imagen del usuario"
+                class="user-avatar"
+                (error)="manejoErrorImagen($event)"
             >
 
             <div class="user-details">
